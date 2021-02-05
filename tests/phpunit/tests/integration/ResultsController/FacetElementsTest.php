@@ -43,10 +43,10 @@ class ResultsControllerTest_FacetElements extends SolrSearch_Case_Default
     /**
      * Create collections and items.
      */
-    public function setUp()
+    public function setUpLegacy()
     {
 
-        parent::setUp();
+        parent::setUpLegacy();
 
         // Set "Type" faceted.
         $this->fieldTable->setElementFaceted('Dublin Core', 'Type');
@@ -69,7 +69,7 @@ class ResultsControllerTest_FacetElements extends SolrSearch_Case_Default
     public function testNoFacet()
     {
 
-        $this->dispatch('solr-search');
+        $this->dispatch('search');
 
         $type1Link = $this->_getFacetLink($this->key, 'type one');
         $type2Link = $this->_getFacetLink($this->key, 'type two');

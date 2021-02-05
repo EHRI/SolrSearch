@@ -31,9 +31,9 @@ class AdminControllerTest_Collections extends SolrSearch_Case_Default
     }
 
 
-    public function setUp()
+    public function setUpLegacy()
     {
-        parent::setUp();
+        parent::setUpLegacy();
 
         $this->pubColl  = $this->_collection('public collection',  TRUE );
         $this->privColl = $this->_collection('private collection', FALSE);
@@ -41,14 +41,14 @@ class AdminControllerTest_Collections extends SolrSearch_Case_Default
         $this->opt = get_option('solr_search_display_private_items');
     }
 
-    public function tearDown()
+    public function tearDownLegacy()
     {
         set_option('solr_search_display_private_items', $this->opt);
 
         $this->pubColl ->delete();
         $this->privColl->delete();
 
-        parent:: tearDown();
+        parent::tearDownLegacy();
     }
 
     /**
@@ -63,11 +63,11 @@ class AdminControllerTest_Collections extends SolrSearch_Case_Default
 
         // echo $this->getResponse()->getBody();
 
-        $this->assertXpathContentContains(
+        $this->assertQueryContentContains(
             "//dd[@id='solrexclude-element']/label",
             "public collection"
         );
-        $this->assertXpathContentContains(
+        $this->assertQueryContentContains(
             "//dd[@id='solrexclude-element']/label",
             "private collection"
         );
@@ -83,13 +83,12 @@ class AdminControllerTest_Collections extends SolrSearch_Case_Default
 
         $this->dispatch('solr-search/collections');
 
-        $this->assertXpathContentContains(
-            "//dd[@id='solrexclude-element']/label",
+        $this->assertQueryContentContains(
+            "//dd[@id='solrexclude-element'][1]/label",
             "public collection"
         );
-        $this->assertNotXpathContentContains(
-            "//dd[@id='solrexclude-element']/label",
-            "private collection"
+        $this->assertNotQuery(
+            "//dd[@id='solrexclude-element'][2]/label"
         );
     }
 

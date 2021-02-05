@@ -10,3 +10,4 @@ pkg
 
 tests/phpunit/solr.ini
 solr-core/omeka/data
+tests/phpunit/.phpunit.result.cache

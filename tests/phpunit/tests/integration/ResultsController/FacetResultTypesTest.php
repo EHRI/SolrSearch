@@ -17,10 +17,10 @@ class ResultsControllerTest_FacetResultTypes extends SolrSearch_Case_Default
     /**
      * Create collections and items.
      */
-    public function setUp()
+    public function setUpLegacy()
     {
 
-        parent::setUp();
+        parent::setUpLegacy();
 
         $this->_installPluginOrSkip('ExhibitBuilder');
         $this->_installPluginOrSkip('SimplePages');
@@ -43,7 +43,7 @@ class ResultsControllerTest_FacetResultTypes extends SolrSearch_Case_Default
     public function testNoFacet()
     {
 
-        $this->dispatch('solr-search');
+        $this->dispatch('search');
 
         $iLink  = $this->_getFacetLink('resulttype', 'Item');
         $eLink  = $this->_getFacetLink('resulttype', 'Exhibit');

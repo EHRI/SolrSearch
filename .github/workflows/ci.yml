@@ -1,0 +1,73 @@
+name: Run Tests
+
+on:
+  push:
+  pull_request:
+
+env:
+  OMEKA_DIR: Omeka
+  DB_DATABASE: omeka_test
+  DB_USER: root
+  DB_PASSWORD: root
+
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set permissions on Solr core
+        run: chmod 0777 solr-core/omeka
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          extensions: mbstring, xml, xsl, mysql, gd
+          ini-values: post_max_size=256M, max_execution_time=180
+
+      - name: Build the docker-compose stack
+        run: docker-compose up -d
+
+      - name: Create solr.ini
+        run: |
+          cat <<EOF > tests/phpunit/solr.ini
+          port = 18983
+          server = localhost
+          core = /solr/omeka/
+          EOF
+
+      - name: Setup host Omeka instance
+        run: |
+          git clone https://github.com/omeka/Omeka.git
+          cd Omeka
+          git checkout 08bfdf470e234edb68e5307a2fef8c899d89256c
+          mv application/config/config.ini.changeme application/config/config.ini
+          mv application/tests/config.ini.changeme application/tests/config.ini
+          mv db.ini.changeme db.ini
+          for f in db.ini application/tests/config.ini
+          do
+            sed -Ei 's/(db\.)?host\s*=\s*"[^"]*"/\1host = "127.0.0.1"/' $f
+            sed -Ei 's/(db\.)?username\s*=\s*"[^"]*"/\1username = "${{ env.DB_USER }}"/' $f
+            sed -Ei 's/(db\.)?password\s*=\s*"[^"]*"/\1password = "${{ env.DB_PASSWORD}}"/' $f
+            sed -Ei 's/(db\.)?dbname\s*=\s*"[^"]*"/\1dbname = "${{ env.DB_DATABASE }}"\n\1port = 3306/' $f
+          done
+          composer -q update
+          composer install -q --no-ansi --no-interaction --no-scripts --no-progress
+
+      - name: Install dependencies
+        run: |
+          composer -q update
+          composer install -q --no-ansi --no-interaction --no-scripts --no-progress
+
+      - name: Run test suite
+        run: composer -vvv test
+#        run: php test.php

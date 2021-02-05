@@ -17,9 +17,9 @@ class ResultsControllerTest_SearchSimplePages extends SolrSearch_Case_Default
     /**
      * Install Simple Pages or skip the suite.
      */
-    public function setUp()
+    public function setUpLegacy()
     {
-        parent::setUp();
+        parent::setUpLegacy();
         $this->_installPluginOrSkip('SimplePages');
     }
 
@@ -34,7 +34,7 @@ class ResultsControllerTest_SearchSimplePages extends SolrSearch_Case_Default
         $page2 = $this->_simplePage(true, 'page2', 'p2');
 
         $_GET['q'] = 'page1';
-        $this->dispatch('solr-search');
+        $this->dispatch('search');
 
         // Should match page 1, but not page 2.
         $this->_assertResultLink(record_url($page1), 'page1');
@@ -58,7 +58,7 @@ class ResultsControllerTest_SearchSimplePages extends SolrSearch_Case_Default
         $page2->save();
 
         $_GET['q'] = 'text1';
-        $this->dispatch('solr-search');
+        $this->dispatch('search');
 
         // Should match page 1, but not page 2.
         $this->_assertResultLink(record_url($page1), 'Page 1');
