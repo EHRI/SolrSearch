@@ -1,9 +1,21 @@
 version: "3.1"
 
 services:
+  db:
+    image: mysql:8.0
+    ports:
+      - 13306:3306
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: "omeka_test"
+      MYSQL_DATABASE: "omeka_test"
+      MYSQL_USER: "omeka_test"
+      MYSQL_PASSWORD: "omeka_test"
+    entrypoint: ["echo", "This service is disabled but here for reference"]
+
   solr:
     image: solr:6.6
     ports:
-      - 8987:8983
+      - 18983:8983
     volumes:
-    - "./solr-core/omeka:/opt/solr/server/solr/mycores/omeka:rw"
+      - "./solr-core/omeka:/opt/solr/server/solr/mycores/omeka"

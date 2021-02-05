@@ -1,0 +1,51 @@
+language: php
+
+matrix:
+  include:
+    - php: 7.2
+      dist: bionic
+
+services:
+  - mysql
+  - docker
+
+sudo: false
+
+env:
+  - OMEKA_DIR=./Omeka
+
+before_install:
+  - docker-compose up -d
+
+before_script:
+  - set -e
+  - git clone https://github.com/omeka/Omeka
+  - cd Omeka
+  - git checkout 08bfdf470e234edb68e5307a2fef8c899d89256c
+  - mysql -e "create database IF NOT EXISTS omeka_test;" -uroot
+  - mv application/config/config.ini.changeme application/config/config.ini
+  - mv application/tests/config.ini.changeme application/tests/config.ini
+  - mv db.ini.changeme db.ini
+  - |
+    for f in db.ini application/tests/config.ini
+    do
+      sed -Ei 's/(db\.)?host\s*=\s*"[^"]*"/\1host = "127.0.0.1"/' $f
+      sed -Ei 's/(db\.)?username\s*=\s*"[^"]*"/\1username = "root"/' $f
+      sed -Ei 's/(db\.)?password\s*=\s*"[^"]*"/\1password = ""/' $f
+      sed -Ei 's/(db\.)?dbname\s*=\s*"[^"]*"/\1dbname = "omeka_test"/' $f
+    done
+  - composer -q update
+  - composer install -q --no-ansi --no-interaction --no-scripts --no-progress
+  - cd ..
+  - |
+    cat <<EOF > tests/phpunit/solr.ini
+    port = 18983
+    server = localhost
+    core = /solr/omeka/
+    EOF
+  - chmod 0777 solr-core/omeka
+
+script:
+  - composer -q update
+  - composer install -q --no-ansi --no-interaction --no-scripts --no-progress
+  - composer test
