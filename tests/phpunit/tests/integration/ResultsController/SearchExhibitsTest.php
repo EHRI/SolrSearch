@@ -2,7 +2,7 @@
 
 /**
  * @package     omeka
- * @subpackage  solr-search
+ * @subpackage  search
  * @copyright   2012 Rector and Board of Visitors, University of Virginia
  * @license     http://www.apache.org/licenses/LICENSE-2.0.html
  */
@@ -17,9 +17,9 @@ class ResultsControllerTest_SearchExhibits extends SolrSearch_Case_Default
     /**
      * Install Exhibit Builder or skip the suite.
      */
-    public function setUp()
+    public function setUpLegacy()
     {
-        parent::setUp();
+        parent::setUpLegacy();
         $this->_installPluginOrSkip('ExhibitBuilder');
     }
 
@@ -34,7 +34,7 @@ class ResultsControllerTest_SearchExhibits extends SolrSearch_Case_Default
         $exhibit2 = $this->_exhibit(true, 'exhibit2', 'e2');
 
         $_GET['q'] = 'exhibit1';
-        $this->dispatch('solr-search');
+        $this->dispatch('search');
 
         // Should match exhibit 1, but not exhibit 2.
         $this->_assertResultLink(record_url($exhibit1), 'exhibit1');
@@ -58,7 +58,7 @@ class ResultsControllerTest_SearchExhibits extends SolrSearch_Case_Default
         $exhibit2->save();
 
         $_GET['q'] = 'desc1';
-        $this->dispatch('solr-search');
+        $this->dispatch('search');
 
         // Should match exhibit 1, but not exhibit 2.
         $this->_assertResultLink(record_url($exhibit1), 'Exhibit 1');

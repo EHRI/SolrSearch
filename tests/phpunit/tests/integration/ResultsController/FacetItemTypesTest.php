@@ -41,10 +41,10 @@ class ResultsControllerTest_FacetItemTypes extends SolrSearch_Case_Default
     /**
      * Create items.
      */
-    public function setUp()
+    public function setUpLegacy()
     {
 
-        parent::setUp();
+        parent::setUpLegacy();
 
         $website = $this->itemTypeTable->findByName('Website');
         $dataset = $this->itemTypeTable->findByName('Dataset');
@@ -63,7 +63,7 @@ class ResultsControllerTest_FacetItemTypes extends SolrSearch_Case_Default
     public function testNoFacet()
     {
 
-        $this->dispatch('solr-search');
+        $this->dispatch('search');
 
         $websiteLink = $this->_getFacetLink('itemtype', 'Website');
         $datasetLink = $this->_getFacetLink('itemtype', 'Dataset');
