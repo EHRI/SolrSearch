@@ -8,8 +8,7 @@
  */
 
 
-class SolrSearch_ResultsController
-    extends Omeka_Controller_AbstractActionController
+class SolrSearch_ResultsController extends Omeka_Controller_AbstractActionController
 {
 
 
@@ -35,7 +34,7 @@ class SolrSearch_ResultsController
 
     /**
      * Display Solr results.
-     * 
+     *
      * @throws Apache_Solr_Exception
      */
     public function indexAction()
@@ -63,8 +62,17 @@ class SolrSearch_ResultsController
             $limitToPublicItems = true;
         }
 
+        // Get the `q` GET parameter.
+        $query = $this->_request->q;
+
+        // Get the `facet` GET parameter
+        $facet = $this->_request->facet;
+
+        // Get a list of active facets.
+        $activeFacets = $this->_fields->getActiveFacetKeys();
+
         // Execute the query.
-        $results = $this->_search($start, $limit, $limitToPublicItems);
+        $results = SolrSearch_Helpers_Search::search($query, $facet, $activeFacets, $start, $limit, $limitToPublicItems);
 
         // Set the pagination.
         Zend_Registry::set('pagination', array(
@@ -76,86 +84,6 @@ class SolrSearch_ResultsController
         // Push results to the view.
         $this->view->results = $results;
 
-    }
-
-
-    /**
-     * Pass setting to Solr search
-     *
-     * @param int $offset Results offset
-     * @param int $limit  Limit per page
-     * @return Apache_Solr_Response Solr results
-     * @throws Apache_Solr_Exception
-     */
-    protected function _search($offset, $limit, $limitToPublicItems = true)
-    {
-
-        // Connect to Solr.
-        $solr = SolrSearch_Helpers_Index::connect();
-
-        // Get the parameters.
-        $params = $this->_getParameters();
-
-        // Construct the query.
-        $query = $this->_getQuery($limitToPublicItems);
-
-        // Execute the query.
-        return $solr->search($query, $offset, $limit, $params);
-    }
-
-
-    /**
-     * Form the complete Solr query.
-     *
-     * @return string The Solr query.
-     */
-    protected function _getQuery($limitToPublicItems = true)
-    {
-
-        // Get the `q` GET parameter.
-        $query = $this->_request->q;
-
-        // If defined, replace `:`; otherwise, revert to `*:*`.
-        // Also, clean it up some.
-        if (!empty($query)) {
-            $query = str_replace(':', ' ', $query);
-            $to_remove = array('[', ']');
-            foreach ($to_remove as $c) {
-                $query = str_replace($c, '', $query);
-            }
-        } else {
-            $query = '*:*';
-        }
-
-        // Limit the query to public items if required
-        if($limitToPublicItems) {
-           $query .= ' AND public:"true"';
-        }
-
-        return $query;
-    }
-
-
-    /**
-     * Construct the Solr search parameters.
-     *
-     * @return array Array of fields to pass to Solr
-     */
-    protected function _getParameters()
-    {
-        return array(
-            'facet'               => 'true',
-            'facet.field'         => $this->_fields->getActiveFacetKeys(),
-            'fq'                  => SolrSearch_Helpers_Facet::parseFilters(),
-            'facet.mincount'      => 1,
-            'facet.limit'         => get_option('solr_search_facet_limit'),
-            'facet.sort'          => get_option('solr_search_facet_sort'),
-            'hl'                  => get_option('solr_search_hl')?'true':'false',
-            'hl.snippets'         => get_option('solr_search_hl_snippets'),
-            'hl.fragsize'         => get_option('solr_search_hl_fragsize'),
-            'hl.maxAnalyzedChars' => get_option('solr_search_hl_max_analyzed_chars'),
-            'hl.fl'               => '*_t'
-        );
     }
 }
 

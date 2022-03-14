@@ -12,7 +12,7 @@ services:
 sudo: false
 
 env:
-  - OMEKA_DIR=./Omeka
+  - BASE_DIR=./Omeka
 
 before_install:
   - docker-compose up -d

@@ -26,10 +26,30 @@ class SolrSearchPlugin extends Omeka_Plugin_AbstractPlugin
         'before_delete_element'
     );
 
+    public function filterApiResources($apiResources)
+    {
+        // For the resource URI: /api/your_resources/[:id]
+        $apiResources['search'] = array(
+            // Module associated with your resource.
+            'module' => 'solr-search',
+            // Controller associated with your resource.
+            'controller' => 'results',
+            // Type of record associated with your resource.
+            'record_type' => 'Item',
+            // List of actions available for your resource.
+            'actions' => array(
+                'index',  // GET request without ID
+            ),
+            // List of GET parameters available for your index action.
+            'index_params' => array('q', 'page', 'f'),
+        );
+        return $apiResources;
+    }
 
     protected $_filters = array(
         'admin_navigation_main',
-        'search_form_default_action'
+        'search_form_default_action',
+        'api_resources'
     );
 
 
