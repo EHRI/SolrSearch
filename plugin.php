@@ -32,6 +32,7 @@ require_once SOLR_DIR.'/lib/SolrSearch/DbPager.php';
 require_once SOLR_DIR.'/helpers/SolrSearch_Helpers_View.php';
 require_once SOLR_DIR.'/helpers/SolrSearch_Helpers_Index.php';
 require_once SOLR_DIR.'/helpers/SolrSearch_Helpers_Facet.php';
+require_once SOLR_DIR.'/helpers/SolrSearch_Helpers_Search.php';
 
 // Forms:
 require_once SOLR_DIR.'/forms/SolrSearch_Form_Server.php';
