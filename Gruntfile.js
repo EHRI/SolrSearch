@@ -8,9 +8,6 @@
 
 module.exports = function(grunt) {
 
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-compass');
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -35,28 +32,6 @@ module.exports = function(grunt) {
 
       application: {
         dir: 'tests/'
-      }
-
-    },
-
-    compass: {
-
-      dist: {
-        options: {
-          sassDir: 'views/shared/css/sass',
-          cssDir: 'views/shared/css',
-          outputStyle: 'compressed',
-          sourcemap: true
-        }
-      }
-
-    },
-
-    watch: {
-
-      payload: {
-        files: 'views/shared/css/sass/*.scss',
-        tasks: 'build'
       }
 
     },
@@ -124,15 +99,9 @@ module.exports = function(grunt) {
   // Run application tests.
   grunt.registerTask('default', 'phpunit');
 
-  // Build the application.
-  grunt.registerTask('build', [
-    'clean',
-    'compass'
-  ]);
-
   // Spawn release package.
   grunt.registerTask('package', [
-    'build',
+    'clean',
     'compress'
   ]);
 
