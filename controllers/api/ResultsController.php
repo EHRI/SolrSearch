@@ -58,18 +58,38 @@ class SolrSearch_ResultsController extends ApiController
 
         $recordsTable = $this->_helper->db->getTable($recordType);
 
-        // Build the data array.
-        $data = array();
         $recordAdapter = new Api_Item;
 
+        // Build the data array.
+        $records = array();
         foreach ($results->response->docs as $doc) {
             $record = $recordsTable->find($doc->modelid);
-            $data[] = $this->_getRepresentation($recordAdapter, $record, $resource);
+            $records[] = $this->_getRepresentation($recordAdapter, $record, $resource);
         }
 
         // Set the Link header for pagination.
         $this->_setLinkHeader($limit, $page, $results->response->numFound, $resource);
 
-        $this->_helper->jsonApi($data);
+        // Urg, I hate this: return a different response type if we need to
+        // send back facet info... very messy, but to do otherwise would break
+        // consistency with the existing resources.
+        if ($request->getQuery("facet", false)) {
+            $facets = array();
+            foreach ($results->facet_counts->facet_fields as $name => $counts) {
+                $label = SolrSearch_Helpers_Facet::keyToLabel($name);
+                $facets[$label] = array();
+                foreach ($counts as $value => $count) {
+                    $facets[$label][$value] = $count;
+                }
+            }
+
+            $this->_helper->jsonApi(array(
+                "records" => $records,
+                "facets" => $facets,
+                "total" => $results->response->numFound
+            ));
+        } else {
+            $this->_helper->jsonApi($records);
+        }
     }
 }
