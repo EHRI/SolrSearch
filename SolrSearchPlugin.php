@@ -41,7 +41,7 @@ class SolrSearchPlugin extends Omeka_Plugin_AbstractPlugin
                 'index',  // GET request without ID
             ),
             // List of GET parameters available for your index action.
-            'index_params' => array('q', 'page', 'f', 'facet'),
+            'index_params' => array('q', 'page', 'per_page', 'f', 'details'),
         );
         return $apiResources;
     }
