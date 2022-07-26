@@ -73,7 +73,7 @@ class SolrSearch_ResultsController extends ApiController
         // Urg, I hate this: return a different response type if we need to
         // send back facet info... very messy, but to do otherwise would break
         // consistency with the existing resources.
-        if ($request->getQuery("facet", false)) {
+        if ($request->details) {
             $facets = array();
             foreach ($results->facet_counts->facet_fields as $name => $counts) {
                 $label = SolrSearch_Helpers_Facet::keyToLabel($name);
