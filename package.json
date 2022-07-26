@@ -1,6 +1,6 @@
 {
   "name": "SolrSearch",
-  "version": "2.5.0-ehri",
+  "version": "2.5.1-ehri",
   "devDependencies": {
     "grunt": ">= 1.5.3",
     "grunt-contrib-clean": "^2.0.1",
