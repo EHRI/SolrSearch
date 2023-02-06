@@ -132,6 +132,7 @@ class SolrSearch_Form_Results extends Omeka_Form
             'solr_search_hl',
             'solr_search_hl_snippets',
             'solr_search_hl_fragsize',
+            'solr_search_hl_max_analyzed_chars',
             'solr_search_facet_sort',
             'solr_search_facet_limit',
             'solr_search_display_private_items',
