@@ -36,7 +36,7 @@ ul {
     li {
       display: inline;
 
-      &+li:before {
+      & + li:before {
         content: "· "
       }
 
@@ -67,11 +67,16 @@ ul {
       }
     }
 
-    /*
-     * .gallery img {
-     *     height: 50px;
-     * }
-     */
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 0.2rem;
+    }
+
+    .gallery img {
+      width: 4rem;
+      height: auto;
+    }
 
   }
 

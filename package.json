@@ -1,15 +1,20 @@
 {
   "name": "SolrSearch",
-  "version": "2.5.2-ehri",
+  "version": "2.5.3-ehri",
   "scripts": {
     "dist": "grunt compress",
-    "test": "grunt"
+    "test": "grunt",
+    "sass": "sass --watch --style compressed --load-path=node_modules views/shared/css/sass:views/shared/css"
   },
   "devDependencies": {
     "grunt": ">= 1.5.3",
     "grunt-contrib-clean": "^2.0.1",
     "grunt-contrib-compress": ">= 0.4.0",
     "grunt-contrib-watch": ">= 0.2.0",
-    "grunt-phpunit": ">= 0.3.6"
+    "grunt-phpunit": ">= 0.3.6",
+    "sass": "^1.83.0"
+  },
+  "dependencies": {
+    "compass-mixins": "^0.12.12"
   }
 }
